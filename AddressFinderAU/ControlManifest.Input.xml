@@ -10,8 +10,10 @@
     <property name="postcode" display-name-key="postcode" description-key="postcode" of-type="SingleLine.Text" usage="bound" required="true" />
     <property name="country" display-name-key="country" description-key="country" of-type="SingleLine.Text" usage="bound" required="true" />
     <property name="afKey" display-name-key="Address Finder Key" description-key="Address Finder Key" of-type="SingleLine.Text" usage="input" required="true" />
-    <property name="state_codes" display-name-key="State Codes" description-key="State codes to filter addresses (e.g. VIC, NSW, QLD). Leave empty for no filter." of-type="SingleLine.Text" usage="input" required="false" />
+    <property name="SearchCountry" display-name-key="Search Country" description-key="Country to search addresses in (AU or NZ). Can be bound to a field or set as static value." of-type="SingleLine.Text" usage="input" required="false" default-value="AU" />
+    <property name="state_codes" display-name-key="State Codes" description-key="State codes to filter addresses (e.g. VIC, NSW, QLD). Leave empty for no filter." of-type="SingleLine.Text" usage="input" required="false" default-value="" />
     <property name="source" display-name-key="Address Source" description-key="Address source to search (default: gnaf, or gnaf,paf to include PAF)" of-type="SingleLine.Text" usage="input" required="false" default-value="gnaf" />
+    <property name="region_code" display-name-key="Region Code" description-key="Region codes to filter NZ addresses (e.g. AUK, WGN, CAN). Leave empty for no filter." of-type="SingleLine.Text" usage="input" required="false" default-value="" />
     <!--
       Property node's of-type attribute can be of-type-group attribute.
       Example:

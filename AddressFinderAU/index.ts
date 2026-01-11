@@ -122,23 +122,31 @@ export class AddressFinderAU
     var searchField = document.getElementById("search_field" + this._domId);
 
     // Get configurable parameters
+    const searchCountry = this._context.parameters.SearchCountry?.raw || "AU";
     const stateCodesParam = this._context.parameters.state_codes?.raw;
     const sourceParam = this._context.parameters.source?.raw || "gnaf";
+    const regionCodeParam = this._context.parameters.region_code?.raw;
 
     // Build address_params object conditionally
-    const addressParams: any = {
-      source: sourceParam,
-    };
+    const addressParams: any = {};
 
-    // Only add state_codes if it's provided
-    if (stateCodesParam && stateCodesParam.trim() !== "") {
-      addressParams.state_codes = stateCodesParam;
+    // Only add source and state_codes if AU
+    if (searchCountry === "AU") {
+      addressParams.source = sourceParam;
+      if (stateCodesParam && stateCodesParam.trim() !== "") {
+        addressParams.state_codes = stateCodesParam;
+      }
+    } else if (searchCountry === "NZ") {
+      // Add region_code if NZ and it exists
+      if (regionCodeParam && regionCodeParam.trim() !== "") {
+        addressParams.region_code = regionCodeParam;
+      }
     }
 
     this.widget = new this.AddressFinder.Widget(
       searchField,
       addressFinderKey,
-      "AU",
+      searchCountry,
       {
         address_params: addressParams,
         address_metadata_params: {
@@ -149,6 +157,8 @@ export class AddressFinderAU
       },
     );
     this.widget.on("result:select", (fullAddress: any, metaData: any) => {
+      const searchCountry = this._context.parameters.SearchCountry?.raw || "AU";
+
       this.inputElement.value = fullAddress;
       this._address_fullname = fullAddress;
       this._address_line_1 = metaData.address_line_1;
@@ -156,7 +166,16 @@ export class AddressFinderAU
       this._suburb = metaData.locality_name;
       this._state = metaData.state_territory;
       this._postcode = metaData.postcode;
-      this._country = "Australia";
+
+      // Set country based on SearchCountry parameter
+      if (searchCountry === "NZ") {
+        this._country = "New Zealand";
+      } else if (searchCountry === "AU") {
+        this._country = "Australia";
+      } else {
+        this._country = "Australia";
+      }
+
       this._notifyOutputChanged();
     });
   };
