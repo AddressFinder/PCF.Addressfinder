@@ -1,18 +1,46 @@
-# PCF.AddressFinderAU
+# PCF.Addressfinder
 
-Dynamics 365/PowerApps PCF Control for AddressFinder (https://addressfinder.com.au/) - Australian and New Zealand Address Lookup
+A PowerApps Component Framework (PCF) control that provides intelligent address autocomplete for Dynamics 365 and Power Apps forms using the [Addressfinder](https://addressfinder.com.au/) service. This control supports both Australian (GNAF/PAF) and New Zealand address databases with real-time search and validation.
 
-This PCF Control is a modified version of Sankal Bansal's PCF of New Zealand-based AddressFinder (https://github.com/SankalpBansal/PCF-AddressFinderNZ)
+## Features
 
-This PCF Control will bind the full address to a specific field and map the granular address breakdown:
+- 🔍 **Real-time address search** - Autocomplete addresses as users type
+- 🌏 **Dual country support** - Search Australian and New Zealand addresses
+- 📍 **Precise geocoding** - Returns GPS coordinates with each address
+- 🎯 **Smart field mapping** - Automatically populates multiple form fields from a single search
+- 🔧 **Flexible filtering** - Filter by state codes (AU) or region codes (NZ)
+- ⚙️ **Configurable data sources** - Choose between GNAF, PAF, or combined sources (AU only)
+- 🔄 **Dynamic country switching** - Bind to form fields to switch between AU/NZ databases
 
-- Address Name (Full Address) - main field
-- Address Line 1
-- Address Line 2
-- Suburb
-- State
+## What It Does
+
+This control replaces standard address input fields with an intelligent autocomplete widget. As users type, it searches the Addressfinder API and displays matching addresses. When a user selects an address, the control automatically populates the following fields on your form:
+
+- Full address name
+- Address line 1
+- Address line 2
+- Suburb/locality
+- State/territory
 - Postcode
-- Country - automatically set to "Australia" or "New Zealand" based on the SearchCountry parameter
+- Country
+- GPS coordinates (in metadata)
+
+## Prerequisites
+
+- An [Addressfinder API key](https://addressfinder.com.au/plans/) (supports both AU and NZ with a single key)
+- Dynamics 365 or Power Apps environment
+- Form fields to bind for address output
+
+## Installation
+
+1. Download the latest release from the [Releases](../../releases) page
+2. Import the solution into your Dynamics 365/Power Apps environment
+3. Add the control to your form and configure the required field bindings
+4. Enter your Addressfinder API key in the control configuration
+
+## Credits
+
+This PCF Control is a modified version of [Sankal Bansal's PCF for AddressFinder NZ](https://github.com/SankalpBansal/PCF-AddressFinderNZ)
 
 ## Configuration Parameters
 
@@ -22,11 +50,20 @@ This PCF Control will bind the full address to a specific field and map the gran
 
 ### Optional Parameters
 
-- **SearchCountry** - Country to search addresses in. Can be bound to a form field or set as a static value.
+- **selectedCountry** - (Optional) Bind to a Choice/OptionSet field for dynamic country selection
 
+  - Type: Choice/OptionSet (bound field)
+  - Can be left unbound if not needed
+  - Supports formatted labels: "Australia", "New Zealand", or codes within labels
+  - Supports numeric values: `1` (Australia) or `2` (New Zealand)
+  - When bound and populated, takes precedence over Default Country
+
+- **defaultCountry** - Default country when Selected Country is not bound or empty
+
+  - Type: Text (control property, not bound)
   - Default: `AU`
-  - Valid values: `AU` (Australia) or `NZ` (New Zealand)
-  - Example: Bind to a country dropdown field to dynamically switch between AU and NZ addresses
+  - Valid values: `AU` or `NZ` (also accepts "Australia" or "New Zealand")
+  - Only used when selectedCountry is not bound or has no value
 
 - **State Codes** - (AU only) State codes to filter Australian addresses
 
@@ -45,39 +82,89 @@ This PCF Control will bind the full address to a specific field and map the gran
   - Example: `1` to limit results to Auckland (see https://addressfinder.com/nz/docs/api/nz/nz-address-autocomplete-api for a full reference list)
   - Only applied when SearchCountry is `NZ`
 
-## Setting up a Country Dropdown
+## Setting up Country Selection
 
-To allow users to dynamically switch between Australian and New Zealand addresses:
+The control supports flexible country configuration:
 
-1. Create an Option Set field (or use an existing country field) on your form with values:
+### Option 1: Dynamic Selection with Choice Field (Recommended)
 
-   - `AU` - Australia
-   - `NZ` - New Zealand
+1. Create a Choice (Option Set) field on your entity:
 
-2. When configuring the PCF control, bind the **SearchCountry** parameter to this field
+   - Add options with labels like "Australia" and "New Zealand"
+   - The numeric values can be any numbers (commonly 1 and 2)
+   - The control reads the formatted label, not the numeric value
 
-3. The control will automatically:
-   - Search the selected country's address database
-   - Apply country-specific filtering (state_codes for AU, region_code for NZ)
-   - Set the Country output field to "Australia" or "New Zealand" accordingly
+2. Add the field to your form
 
-# Building
+3. When configuring the PCF control:
+   - Bind **selectedCountry** to your Choice field
+   - Optionally set **defaultCountry** to `AU` or `NZ` as a fallback
 
-Update the version in the xml file: `Solution/AddressFinderControlAU/Other/Solution.xml`
+### Option 2: Static Configuration
 
-Update the version in the xml file: `AddressFinderAU/ControlManifest.Input.xml`
+1. When configuring the PCF control:
+   - Leave **selectedCountry** unbound
+   - Set **defaultCountry** to `AU` or `NZ`
 
-Update the version in the widget configuration file `index.ts`
+### Option 3: No Configuration
 
-In the root folder
+- If neither parameter is set, the control defaults to Australia (`AU`)
 
-`npm install`
-`npm run build`
+### How It Works
 
-## Build a Release Package
+The control resolves the country in this priority order:
+
+1. **selectedCountry** (bound Choice field) - if bound and has a value
+2. **defaultCountry** (control property) - if selectedCountry not available
+3. Hard-coded default: `AU`
+
+When a country is selected, the control automatically:
+
+- Search the selected country's address database
+- Apply country-specific filtering (state_codes for AU, region_code for NZ)
+- Set the Country output field to "Australia" or "New Zealand" accordingly
+
+---
+
+## Development
+
+### Building from Source
+
+Update the version in the xml file: `Solution/AddressfinderControl/src/Other/Solution.xml`
+
+Update the version in the xml file: `AddressfinderControl/ControlManifest.Input.xml`
+
+Update the version in the widget configuration file `index.ts` (ca parameter: `ca: "MD365/1.2.0"`)
+
+In the root folder:
+
+```powershell
+npm install
+npm run build
+```
+
+### Build a Release Package
 
 Run the build script:
 
-`.\build-release.ps1`
+```powershell
+.\build-release.ps1
+```
 
-This will build the PCF control, package the solution, and copy the release zip to the `Release` folder.
+This will:
+
+1. Build the PCF control
+2. Package the solution
+3. Copy the release zip to the `Release` folder
+
+The packaged solution will be ready to import into your Dynamics 365/Power Apps environment.
+
+## License
+
+See [LICENSE](LICENSE) file for details.
+
+## Support
+
+For issues related to the Addressfinder API, visit [Addressfinder Support](https://addressfinder.com.au/support/)
+
+For issues with this PCF control, please open an issue in this repository.

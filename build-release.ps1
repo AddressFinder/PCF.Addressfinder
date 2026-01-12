@@ -9,7 +9,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host "Building solution package..." -ForegroundColor Cyan
-msbuild Solution\AddressFinderControlAU\AddressFinderControlAU.cdsproj /t:build /restore /p:configuration=Release
+msbuild Solution\AddressfinderControlSolution\AddressfinderControlSolution.cdsproj /t:build /restore /p:configuration=Release
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Solution build failed!" -ForegroundColor Red
@@ -18,7 +18,7 @@ if ($LASTEXITCODE -ne 0) {
 
 Write-Host "Copying release package..." -ForegroundColor Cyan
 $releaseDir = Join-Path $PSScriptRoot "Release"
-$sourceZip = Join-Path $PSScriptRoot "Solution\AddressFinderControlAU\bin\Release\AddressFinderControlAU.zip"
+$sourceZip = Join-Path $PSScriptRoot "Solution\AddressfinderControlSolution\bin\Release\AddressfinderControlSolution.zip"
 
 if (-not (Test-Path $releaseDir)) {
     New-Item -ItemType Directory -Path $releaseDir | Out-Null
@@ -26,4 +26,4 @@ if (-not (Test-Path $releaseDir)) {
 
 Copy-Item $sourceZip $releaseDir -Force
 
-Write-Host "Release package created successfully at $releaseDir\AddressFinderControlAU.zip" -ForegroundColor Green
+Write-Host "Release package created successfully at $releaseDir\AddressfinderControlSolution.zip" -ForegroundColor Green
