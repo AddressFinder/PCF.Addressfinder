@@ -87,11 +87,11 @@ This PCF Control is a modified version of [Sankal Bansal's PCF for AddressFinder
 
 The control supports flexible country configuration:
 
-### Option 1: Dynamic Selection with Choice Field (Recommended)
+### Option 1: Dynamic Selection with Choice Field for Selecting Addresses in Both NZ and AU datasets
 
 1. Create a Choice (Option Set) field on your entity:
 
-   - Add options with labels like "Australia" and "New Zealand"
+   - Add options with labels "Australia" and "New Zealand"
    - The numeric values can be any numbers (commonly 1 and 2)
    - The control reads the formatted label, not the numeric value
 
@@ -101,13 +101,13 @@ The control supports flexible country configuration:
    - Bind **selectedCountry** to your Choice field
    - Optionally set **defaultCountry** to `AU` or `NZ` as a fallback
 
-### Option 2: Static Configuration
+### Option 2: Static Configuration - configuring just NZ or AU
 
 1. When configuring the PCF control:
    - Leave **selectedCountry** unbound
    - Set **defaultCountry** to `AU` or `NZ`
 
-### Option 3: No Configuration
+### Option 3: No Configuration (defaults to Australia)
 
 - If neither parameter is set, the control defaults to Australia (`AU`)
 
